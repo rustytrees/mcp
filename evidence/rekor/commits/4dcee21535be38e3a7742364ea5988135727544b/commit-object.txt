@@ -1,0 +1,62 @@
+tree a4839c213ac47d3b090c31e3ca3b220d8303f585
+parent b898ff46e4169b183f5459e41fe82e131ad2907b
+author rustytrees <treesbot+rust@gmail.com> 1785361664 -0400
+committer rustytrees <treesbot+rust@gmail.com> 1785361664 -0400
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ iQJPBAABCAA5FiEE35G9e3WLMhmRf8dt6vocDiSnjdkFAmpqdQAbFIAAAAAABAAO
+ bWFudTIsMi41KzEuMTIsMCwzAAoJEOr6HA4kp43Z6MEP/3YW8jWQFH8u0aYSIEBk
+ sujW4Z44dgPPIbKKyvllJ2iBflILaTyzhDA+S43epjGEsG17fAyE11hMxeDkJyvi
+ bo8fmdfkFXeH7uVoBcSYy0DcLDGL71DrY38pzL0UUXPvZ524APLzUvMo52J1WAkj
+ 30kBG04xA5SGlzj5JuQxwci1wVDOPWc4dYcLjhhuD3WcK+wNhoSnUfz8z+M0UM2a
+ cPTB4W9V/7S4/H5FCyinUG3r44zHkFh4O/wqUpIzVnf//AzAR1RFvnIDtYMnAMOo
+ JAaQop1GxdGTHqnBNLpppZygcAIQblAc6XChhWZtw5GBjclxDb8eZP94qQJeAUQR
+ ZygvQUy32sHhKbfX9suUGfbFirmaRR+O/RY0wpQjUSXkyGvzgcHi8zsA6nT+aeE0
+ BZ5Qik/AcoOthVIyUhB8G1WK6yvF8t1t8nzXBn8jWzYbvk3bYoDqjsM52C2ncHUv
+ Zy+nlmse7zkOhTf8yEW0ettwMWkgCObABsobq6rG3zUPKgnmfLHf5f2sFcNF5NM6
+ fWaqJHXLVA0KVLQj9M3LdNVltbagWjNtToBYIvywZ2tFxu5V7sdcGB7wdVMQZ9EY
+ hinrBwYEcXczHzgWoSzE70flVg6ewESK6gb2PH97aTAVaT6Bd8BmY02E08o8ChJJ
+ XI3bC44/p07SjhDpWNT/QxK3
+ =u2st
+ -----END PGP SIGNATURE-----
+
+chore(deps): npm audit fix to clear 4 transitive advisories
+
+`npm audit --omit=dev` reported 4 advisories in the committed lockfile:
+
+  high      fast-uri            host confusion via literal backslash
+                                authority delimiter
+  moderate  hono            x3  JSX cross-request context leak, cx()
+                                XSS, API Gateway header de-dup
+  moderate  @hono/node-server   serve-static path traversal on Windows
+
+All arrive transitively through @modelcontextprotocol/sdk. Reachability is
+low -- yaw-mcp runs as a stdio broker and does not exercise the HTTP server
+paths these live on -- but the lockfile is what contributors and CI resolve,
+so the vulnerable tree is what gets built from this repo. npm consumers
+resolving ^1.29.0 fresh were already getting fixed versions.
+
+`npm audit fix` alone, no --force and no package.json change: the existing
+^1.29.0 range already admits SDK 1.30.0.
+
+  @modelcontextprotocol/sdk  1.29.0  -> 1.30.0
+  @hono/node-server          1.19.14 -> 2.0.12
+  hono                       4.12.25 -> 4.12.32
+  fast-uri                   3.1.2   -> 3.1.4
+  nanoid                     3.3.12  -> 3.3.16
+  postcss                    8.5.16  -> 8.5.25
+
+@hono/node-server crosses a major version. That is not a forced override --
+SDK 1.30.0 declares `"@hono/node-server": "^1.19.9 || ^2.0.5"`, so v2 is
+inside the range the SDK itself supports.
+
+`npm audit --omit=dev` now reports 0 vulnerabilities. Lint, typecheck,
+build, and the full suite (2019 passing) are green on the bumped tree.
+
+One unrelated line comes along: npm rewrites the lockfile's root `license`
+from "UNLICENSED" to "SEE LICENSE IN LICENSE", matching package.json. That
+is npm's own normalization -- it reappears on any plain `npm install` -- so
+hand-reverting it would only make the lockfile disagree with what the
+tooling generates.
+
+Signed-off-by: rustytrees <treesbot+rust@gmail.com>
