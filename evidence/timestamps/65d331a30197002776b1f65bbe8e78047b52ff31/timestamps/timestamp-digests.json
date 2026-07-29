@@ -1,0 +1,8 @@
+{
+  "generatedAt": "2026-07-29T21:48:51Z",
+  "manifestJsonSha256": "44d26a1877d55a262d44f2f1df097f9fd04ba0d25a017e040dd88189c74d57f3",
+  "manifestSha256": "44d26a1877d55a262d44f2f1df097f9fd04ba0d25a017e040dd88189c74d57f3",
+  "manifestSha256FileSha256": "b2d066102c6d08930b8f33229623104acd2ca7053fecd8584de26e895913c3de",
+  "merkleTreeJsonSha256": "7686626906b245e40cc3b41dc513c5cbc3568e7bb2c452a2f346ea5495a8d667",
+  "schema": "git-trust.timestamp-digests.v1"
+}
