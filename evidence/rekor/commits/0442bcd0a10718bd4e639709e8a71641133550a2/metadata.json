@@ -1,0 +1,9 @@
+{
+  "commit": "0442bcd0a10718bd4e639709e8a71641133550a2",
+  "revision": "0442bcd",
+  "commitObjectSha256": "e7784178ce97c9ec631923b55a2bab87afcf73571b6bca5c4516ba0aa2dccee7",
+  "rekorUrl": "https://rekor.sigstore.dev",
+  "timestampServerUrl": "https://timestamp.sigstore.dev/api/v1/timestamp",
+  "commitObject": "evidence/rekor/commits/0442bcd0a10718bd4e639709e8a71641133550a2/commit-object.txt",
+  "bundle": "evidence/rekor/commits/0442bcd0a10718bd4e639709e8a71641133550a2/cosign-bundle.json"
+}

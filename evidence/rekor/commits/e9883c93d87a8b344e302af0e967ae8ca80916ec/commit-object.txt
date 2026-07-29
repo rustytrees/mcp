@@ -1,0 +1,53 @@
+tree addbb6e3c461d68c37420a3bbc93ff9be9f86a41
+parent b898ff46e4169b183f5459e41fe82e131ad2907b
+author rustytrees <treesbot+rust@gmail.com> 1785359623 -0400
+committer rustytrees <treesbot+rust@gmail.com> 1785359623 -0400
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ iQJPBAABCAA5FiEE35G9e3WLMhmRf8dt6vocDiSnjdkFAmpqbQcbFIAAAAAABAAO
+ bWFudTIsMi41KzEuMTIsMCwzAAoJEOr6HA4kp43Zj5cP/16FMyPHlVeqWNKSzrN3
+ zcyaYJbgcvT6jwhx8ksqKGqiAsoO8pY8UGidA+lN2DqMkyADhYIaz1zhhEzPHB83
+ d8wkczZd/+qjBucnIR/YGCxujCKwbvVz99DfxvjH44YdujlVqE7JBom2lESRXYbR
+ oyyv4G+eNbiJz91fQXGjz34Wv/wd5lgbQQEIN7LfXSS2cluTm38ULmyJBS8eTnW2
+ duhlX7gp5+Qq+LtrwN39knplpDDC4+jDuNdIrEtcd+ukyrVXI7Bv0C8J63tg/3yl
+ Fvcm5OB+XhH+JMbl3wBN911cerWlL8xKXxk8UVaytgCMYyIvKk/PDHkuJCdQiKCt
+ BC32WTqOvvrPjVVw+CEfuqbwY/LvPGD8LThOH17COxM4gDFhRQejD7i0Y96OmP0e
+ sgfB+Lzx0UMnGi3hQmTpT48lVyw4gSdAG1HGgJT4d4CDQnkDxdcN92s7gyrkLCmH
+ cIlrXZ6b3J2J8JdCmbqlRVKPOoBS3P1ele3S3wyGJsOdOHo+aIk3R0hCqn9pinXC
+ 6/4KyMHZJ29sRLARK9f8wfgzBhAwS2jZ604csFgJGYzJb9Y1YJD237TcMhfKRbtd
+ ftY4WqjdBw0/2KSes8Jaq1YMdZ/PC1G/u91ZdEqP907LtS1AUN4ncJUfEjOj7s18
+ vKxLKmNLPquaSbl/+2+xeflo
+ =GlYD
+ -----END PGP SIGNATURE-----
+
+fix: preserve a "__proto__" key when rebuilding JSON trees
+
+Two places rebuild a JSON-derived object by assigning onto a fresh `{}`:
+resolveArgs (exec-engine.ts) for outgoing tool arguments, and pruneJson
+(prune.ts) for incoming upstream results.
+
+JSON.parse produces "__proto__" as an OWN data property, but `out[k] = v`
+does not create an own key for it -- it invokes Object.prototype's
+__proto__ setter. The rebuilt object therefore has no own "__proto__", and
+since JSON.stringify only serializes own properties the field is silently
+dropped: an exec step loses an argument it declared, and a pruned tool
+result loses a field the upstream server actually returned.
+
+To be clear about what this is NOT: Object.prototype is never touched, so
+this is not prototype pollution. Only the freshly constructed object's own
+prototype is affected, and the observable consequence is a dropped field.
+
+Assign via Object.defineProperty for that one key so it lands as the plain
+data property the input had. The common path keeps plain assignment, so
+there is no cost on ordinary keys.
+
+Adds 6 tests. All of them fail before this change (3 in exec-engine, 1 in
+prune) and pass after; the remainder pin that Object.prototype stays clean
+and that $ref resolution still works inside a __proto__-keyed argument.
+
+Note for reviewers: the tests build their expected values with JSON.parse
+rather than object literals, because `{ __proto__: ... }` in source sets
+the prototype instead of creating an own key -- the same trap the fix is
+about, and one an assertion can silently fall into.
+
+Signed-off-by: rustytrees <treesbot+rust@gmail.com>

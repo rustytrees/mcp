@@ -1,0 +1,50 @@
+tree cebc251cf67760cf999013b8341de1295fbd09c2
+parent b898ff46e4169b183f5459e41fe82e131ad2907b
+author rustytrees <treesbot+rust@gmail.com> 1785359743 -0400
+committer rustytrees <treesbot+rust@gmail.com> 1785359743 -0400
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ iQJPBAABCAA5FiEE35G9e3WLMhmRf8dt6vocDiSnjdkFAmpqbX8bFIAAAAAABAAO
+ bWFudTIsMi41KzEuMTIsMCwzAAoJEOr6HA4kp43Zb0wP/iEdsxh/pK72jEUvJTcT
+ 2CM2RFQPUWIiUSTyIJTWE7t581W1FbP7Xp6QoNhPJuz+FltKlSaRoZdFK27rx6Ol
+ T9a79hmRSDDfs7G/l87CV3Y4Al0s1osTqsdg0C7Yu+NVZFFfjmpCF+BMdY82bCM4
+ A4eOnPhqNVX8t+XbdjQ4mbpPc8am2d5VMpPD3nXnzZWH/IdGXpLQZvHjCe/rqpEL
+ 9q/MMs40DVIU7a00fCaSfK9IXcabJbbzITUQRz/7+rUAHAecgPL9vRkzo+oH7b5e
+ wUjTE10IMaw5QMIg4FQG/2LGM90m23mQYUye7Y/amVONPABfBd/OTUtE0NQ4E9OH
+ wn6XO42N6QhYSXkeYNUfbrq7nCvKUCC3aoDRn0uUZd0Qe2nqFHfgQxxbnpevGETE
+ A6kXKGwt36c5vd21DjlZJxIEOWTbqEMclgLm6REtKr2JK+Bbg+jRUUcjBoZnfPN8
+ 1pF+XdeITu5+mxK5E1WP7+Pgkg9Gog7/JdmU/oHGJ0eKBKvQtdvEamgWLPxwcNhp
+ xIJ0h5uEswU+rFCXc6rjqGUAZ+UmJ62U2dqWAQVi/98HM5fotCRAXL996Peh7nYU
+ fA4JOIYTqcoHUIM0/S1wHVL9aaNv8rpAeK1mgxrRsSMqFiqpqHlyF1DdfBw6LLJG
+ 0hYYwf3xKW5WpSHwGuOF0l6i
+ =NpEU
+ -----END PGP SIGNATURE-----
+
+fix(oam): bound the `oam --version` probe with a timeout
+
+probeOam() calls execFileSync with no timeout. execFileSync blocks the
+event loop, and this sits on the upstream connect path of a single-threaded
+broker, so an oam binary that hangs rather than exiting -- stuck on a
+network mount, a wedged FUSE path, a process stopped under a debugger --
+takes the entire hub down with it. The client stdio transport and every
+in-flight upstream call stop being serviced, and there is no way to break
+out because nothing is watching the clock.
+
+Add `timeout: 3000`, matching the budget uv-bootstrap's onPath() probe
+already uses for the same "is this binary here and working" question.
+
+On timeout execFileSync throws, which the existing catch already turns into
+`{ bin: null }` -- the same result as oam being absent -- so the server
+falls back to node/npx. The worst case becomes a bounded 3s stall followed
+by the documented fallback, instead of an unbounded hang. The probe result
+is cached, so this is paid at most once per process.
+
+Scope: only servers whose effective runtime is "oam" reach this
+(connectToUpstreamOnce gates on it), but YAW_MCP_DEFAULT_RUNTIME=oam turns
+that on for every local server at once.
+
+Adds 3 tests: the constant, that a throwing probe degrades to the
+node-fallback shape, and that an opted-in npx server keeps its original
+command after a timed-out probe.
+
+Signed-off-by: rustytrees <treesbot+rust@gmail.com>
