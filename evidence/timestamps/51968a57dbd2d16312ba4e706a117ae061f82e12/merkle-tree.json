@@ -1,0 +1,43 @@
+{
+  "evidenceCommit": "51968a57dbd2d16312ba4e706a117ae061f82e12",
+  "leafHash": "SHA256('git-trust-leaf-v1\\0' || path || '\\0' || file_sha256_hex)",
+  "levels": [
+    [
+      {
+        "hash": "4be17e2fa107956f29833d3e16402c1b5eb75c41092a0266f019659e4abf53a4",
+        "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/commit-object.txt"
+      },
+      {
+        "hash": "f334adfd88379bff80b577547fd59ea55157ce91cbda24767518ed0e09291872",
+        "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/cosign-bundle.json"
+      },
+      {
+        "hash": "d4b56f813b9f7df2e1f681331833fdf97d50cfb4ea246d56c50f00bf11146e65",
+        "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/metadata.json"
+      }
+    ],
+    [
+      {
+        "hash": "6db9362ae26b53ca377dca7aa5232e3c0ee2a5f0ab0bba32ffa5dea109113f2e",
+        "left": "4be17e2fa107956f29833d3e16402c1b5eb75c41092a0266f019659e4abf53a4",
+        "right": "f334adfd88379bff80b577547fd59ea55157ce91cbda24767518ed0e09291872"
+      },
+      {
+        "hash": "77fb0b8c3b72b09bcedf4c6aef11157562d819c2153732fa02869ca5ad0125d7",
+        "left": "d4b56f813b9f7df2e1f681331833fdf97d50cfb4ea246d56c50f00bf11146e65",
+        "right": "d4b56f813b9f7df2e1f681331833fdf97d50cfb4ea246d56c50f00bf11146e65"
+      }
+    ],
+    [
+      {
+        "hash": "5575528cd4a557b90e0fcc9d0b9f08d6dcb25fabf45b4696b8d10b28995aeed0",
+        "left": "6db9362ae26b53ca377dca7aa5232e3c0ee2a5f0ab0bba32ffa5dea109113f2e",
+        "right": "77fb0b8c3b72b09bcedf4c6aef11157562d819c2153732fa02869ca5ad0125d7"
+      }
+    ]
+  ],
+  "merkleRootSha256": "5575528cd4a557b90e0fcc9d0b9f08d6dcb25fabf45b4696b8d10b28995aeed0",
+  "nodeHash": "SHA256('git-trust-node-v1\\0' || left_hex || '\\0' || right_hex)",
+  "oddLeafPolicy": "duplicate-last",
+  "schema": "git-trust.evidence-merkle-tree.v1"
+}

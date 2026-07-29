@@ -1,0 +1,36 @@
+{
+  "entries": [
+    {
+      "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/commit-object.txt",
+      "sha256": "9a4cbc3b1c28302a22f3513cea033a0d18a07183ffba16c6e5eb58542cb2d30b",
+      "size": 3444
+    },
+    {
+      "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/cosign-bundle.json",
+      "sha256": "4d3b5725a5a5ab34a1553e2e063b3f11fea2a37bbc4d3d0c44ef03732077ffa9",
+      "size": 3806
+    },
+    {
+      "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/metadata.json",
+      "sha256": "3ae4a5147cdd004c34f9060b3667647a8c86df10d709aa9213549f14c141471d",
+      "size": 493
+    }
+  ],
+  "entryCount": 3,
+  "evidenceCommit": "51968a57dbd2d16312ba4e706a117ae061f82e12",
+  "generatedAt": "2026-07-29T20:44:27Z",
+  "log": {
+    "entries": [
+      {
+        "commit": "2f26f158a410e585668f070bc2effb1bc54ffbee",
+        "commitObjectSha256": "9a4cbc3b1c28302a22f3513cea033a0d18a07183ffba16c6e5eb58542cb2d30b"
+      }
+    ],
+    "leafHash": "SHA256('git-trust-ct-leaf-v1\\0' || commit || '\\0' || commitObjectSha256)",
+    "rootSha256": "faec346d0a064ef0d1e80ecb11a859c6576731ac82b5400e238be16115f887b8",
+    "schema": "git-trust.evidence-log.v1",
+    "size": 1
+  },
+  "merkleRootSha256": "5575528cd4a557b90e0fcc9d0b9f08d6dcb25fabf45b4696b8d10b28995aeed0",
+  "schema": "git-trust.evidence-manifest.v1"
+}
