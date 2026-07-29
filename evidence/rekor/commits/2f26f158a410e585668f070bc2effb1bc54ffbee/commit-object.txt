@@ -1,0 +1,72 @@
+tree 78090abcfcd24c5532bd1bded6ade44ce62d2cf1
+parent b898ff46e4169b183f5459e41fe82e131ad2907b
+author rustytrees <treesbot+rust@gmail.com> 1785357705 -0400
+committer rustytrees <treesbot+rust@gmail.com> 1785357705 -0400
+gpgsig -----BEGIN PGP SIGNATURE-----
+ 
+ iQJPBAABCAA5FiEE35G9e3WLMhmRf8dt6vocDiSnjdkFAmpqZYkbFIAAAAAABAAO
+ bWFudTIsMi41KzEuMTIsMCwzAAoJEOr6HA4kp43ZlpUP/RseigdpFJtuI61mARH6
+ eYvVyLAggDPiwcNYrfetkCbWo6IX/QGR3dA0/Ej8IsODcT+e3FlAJu1USQ86SSmw
+ U7X221ZAOpuUl/CY4G2kjx4YyB++kgUJ/dUT/xYIcRLwokbcX0VIrSUh2o5QY5r5
+ GEhgEiXrSildALWhWiHx0O8oE0bcr7XqtF6qVnfpNV5PjdR0jbHk4wKImjexqCBK
+ AU8IwmVnvXZj86lXBe86FT/QmrgmaH+dGjBfCzFzK0W2B9nNX2108/S3t1NkX0wZ
+ TBfkgsh4IV84BUj4kZSuluEuQle1zdA7RxzMumiy7QcG41bLYG2xyl2cvFPekxLF
+ ipTjJ5r9qj/QyRkLUtQAHKi4Cqxy6wBIfYuCEBjyI/IDe/i4Gu+wmwdX+pdbxxTP
+ zC1mHttv7hvoxy7uL1D6LDY3bkDf9/XCHb3tcSjmh/fRyg7E0xigYjbOM1rZVJGF
+ Vtpquh4rwrL27Nscg8g2tXTXLjr7v57l9T3fnf846qjS6r3YHr3d+xe+g/dHB7Dz
+ fbMRv1YiidM2YKLkHAVMTBnvjN5l9kGlF7LkFjnzlqKRuOqB+DlWoizzeAoo19Yc
+ kL2uRSV0+bGm3hYTqb6KbyHRR0fv972tCF8R5WlSxd30EJ8WoFqvUXnocwVlNy2Y
+ 0iwHukwzAjCD+IrKWPD3ZCVo
+ =9QT6
+ -----END PGP SIGNATURE-----
+
+perf(relevance): cache the BM25 index instead of rebuilding it per call
+
+rankServers() rebuilt its entire index on every call: tokenizing every
+server namespace/name/description plus every tool name and description,
+building a per-document token Set for document frequency, then recomputing
+IDF and average field lengths. Nothing was memoized, and the function sits
+on the hot path for both discover() and dispatch.
+
+Profiling a synthetic corpus at the scale yaw targets shows ~90% of a call
+is this query-independent prep:
+
+  tokenize/buildDocFields  3.28ms  (74%)  <- query-independent
+  DF/IDF set-building      0.75ms  (17%)  <- query-independent
+  termFreq scoring         0.42ms   (9%)  <- query-dependent
+
+Two changes:
+
+1. Cache the built index, keyed on the corpus CONTENT rather than object
+   identity. Callers construct a fresh RankableServer array on every call
+   (ConnectServer.rankableFor), so an identity key would never hit; a
+   content key additionally makes stale results impossible by construction,
+   since any edit to a name, description, or tool text changes the key.
+   Building that key costs ~3% of what tokenizing the same text costs.
+   Per-server fields are cached separately, so activating one server reuses
+   the other N-1 documents. Both caches are bounded and evict oldest-first.
+
+2. Store per-field term counts instead of a token array. Term frequency was
+   a linear scan of the field for every (query term, field) pair; it is now
+   a Map lookup.
+
+Also replaces a linear find inside a map in handleDiscover with a
+namespace-keyed Map (it was O(N^2) re-associating ranked results back to
+their server records).
+
+Measured per-call cost, same benchmark before and after:
+
+  10 srv /  150 tools   0.81ms -> 0.05ms   (16x)
+  30 srv / 1050 tools   4.69ms -> 0.18ms   (26x)
+  60 srv / 2400 tools   9.87ms -> 0.43ms   (23x)
+ 100 srv / 5000 tools  20.79ms -> 0.94ms   (22x)
+
+Scoring behaviour is unchanged. Verified by differential-testing the old
+and new implementations across 4000 randomized corpora: identical scores
+and identical ordering in every case.
+
+Adds 9 tests covering cache hits, invalidation on description/tool edits,
+partial per-server reuse, cache bounding, signature-collision safety, and
+k1 saturation after the counts refactor.
+
+Signed-off-by: rustytrees <treesbot+rust@gmail.com>
