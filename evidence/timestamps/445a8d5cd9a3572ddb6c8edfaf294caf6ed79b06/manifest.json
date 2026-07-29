@@ -1,0 +1,84 @@
+{
+  "entries": [
+    {
+      "path": "evidence/rekor/commits/0442bcd0a10718bd4e639709e8a71641133550a2/commit-object.txt",
+      "sha256": "e7784178ce97c9ec631923b55a2bab87afcf73571b6bca5c4516ba0aa2dccee7",
+      "size": 2549
+    },
+    {
+      "path": "evidence/rekor/commits/0442bcd0a10718bd4e639709e8a71641133550a2/cosign-bundle.json",
+      "sha256": "dc7e8d2e9882db5933be187eaaba27c547f9a1fb2e4d1cb8fc2f68d14993d538",
+      "size": 3618
+    },
+    {
+      "path": "evidence/rekor/commits/0442bcd0a10718bd4e639709e8a71641133550a2/metadata.json",
+      "sha256": "f632c872e67c9b1bf44521a8f7d3389965bb3fa3adaead9baab3c4c5bc859212",
+      "size": 496
+    },
+    {
+      "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/commit-object.txt",
+      "sha256": "9a4cbc3b1c28302a22f3513cea033a0d18a07183ffba16c6e5eb58542cb2d30b",
+      "size": 3444
+    },
+    {
+      "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/cosign-bundle.json",
+      "sha256": "4d3b5725a5a5ab34a1553e2e063b3f11fea2a37bbc4d3d0c44ef03732077ffa9",
+      "size": 3806
+    },
+    {
+      "path": "evidence/rekor/commits/2f26f158a410e585668f070bc2effb1bc54ffbee/metadata.json",
+      "sha256": "3ae4a5147cdd004c34f9060b3667647a8c86df10d709aa9213549f14c141471d",
+      "size": 493
+    },
+    {
+      "path": "evidence/rekor/commits/e9883c93d87a8b344e302af0e967ae8ca80916ec/commit-object.txt",
+      "sha256": "7e22aceedb43d368ad1f709f4756d092abe75b474f7902dba62952cea44f63da",
+      "size": 2737
+    },
+    {
+      "path": "evidence/rekor/commits/e9883c93d87a8b344e302af0e967ae8ca80916ec/cosign-bundle.json",
+      "sha256": "892d8671a235e18060c90b8ad9a8bcce7995ba2c6d7d01e53ed38f1d5d5c2a9c",
+      "size": 3669
+    },
+    {
+      "path": "evidence/rekor/commits/e9883c93d87a8b344e302af0e967ae8ca80916ec/metadata.json",
+      "sha256": "186cf6eae09aecf5e5febaa2200ea56fdf4ff919b698aa48542c87f91f67657b",
+      "size": 496
+    }
+  ],
+  "entryCount": 9,
+  "evidenceCommit": "445a8d5cd9a3572ddb6c8edfaf294caf6ed79b06",
+  "generatedAt": "2026-07-29T21:16:42Z",
+  "log": {
+    "consistencyProof": [
+      "de5c15d777d80b9f10e684e9c8beea88b0f7a838e5fe4dd0a65aacbe5a54e88f",
+      "b7ae269bd463791b714da93e89b13ba62ad471cb02c2e7b198f07872a3117619"
+    ],
+    "entries": [
+      {
+        "commit": "2f26f158a410e585668f070bc2effb1bc54ffbee",
+        "commitObjectSha256": "9a4cbc3b1c28302a22f3513cea033a0d18a07183ffba16c6e5eb58542cb2d30b"
+      },
+      {
+        "commit": "0442bcd0a10718bd4e639709e8a71641133550a2",
+        "commitObjectSha256": "e7784178ce97c9ec631923b55a2bab87afcf73571b6bca5c4516ba0aa2dccee7"
+      },
+      {
+        "commit": "e9883c93d87a8b344e302af0e967ae8ca80916ec",
+        "commitObjectSha256": "7e22aceedb43d368ad1f709f4756d092abe75b474f7902dba62952cea44f63da"
+      }
+    ],
+    "leafHash": "SHA256('git-trust-ct-leaf-v1\\0' || commit || '\\0' || commitObjectSha256)",
+    "prev": {
+      "evidenceCommit": "51968a57dbd2d16312ba4e706a117ae061f82e12",
+      "manifestSha256": "a3300f4236dcd120e81b3ce6d213a9ef7dffbcd9d5343fe64eaa3950979d9740",
+      "rootSha256": "faec346d0a064ef0d1e80ecb11a859c6576731ac82b5400e238be16115f887b8",
+      "size": 1
+    },
+    "rootSha256": "dbf39fa7c592f6037c55b732a8985ea4bcd075c44cee8a7b0556b19eddbe8ef5",
+    "schema": "git-trust.evidence-log.v1",
+    "size": 3
+  },
+  "merkleRootSha256": "66cb0228a737a698b1b391dbe7832689c8d763931b89794677b4bb50172f0541",
+  "schema": "git-trust.evidence-manifest.v1"
+}
